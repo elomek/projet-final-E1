@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-y)aj27x8o9@^(kv_4-6hlul7xf8o72-*@zx7v=2hnit6h&8de7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
 
 
 # Application definition
@@ -75,11 +75,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 import os 
-from pathlib import Path
 from dotenv import load_dotenv
 
 #load .env
 load_dotenv()
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
