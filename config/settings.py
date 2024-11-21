@@ -74,11 +74,27 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+import os 
+from pathlib import Path
+from dotenv import load_dotenv
+
+#load .env
+load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
+    },
+    "mysql_db": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.getenv("MYSQL_DATABASE"),
+        "HOST": os.getenv("MYSQL_HOST", "localhost"),
+        "USER": os.getenv("MYSQL_USER"),
+        'PASSWORD': os.getenv("MSQL_PASSWORD"),
+        "PORT": os.getenv("MYSQL_PORT", '3306'),
     }
 }
 
