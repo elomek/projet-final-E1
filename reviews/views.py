@@ -2,4 +2,4 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 def home_page_view(request):
-    return HttpResponse("Home page")
+    return render(request, 'home.html')
