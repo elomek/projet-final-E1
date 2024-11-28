@@ -8,13 +8,36 @@ import numpy as np
 def download_kaggle_dataset():
     os.environ['KAGGLE_USERNAME'] = os.getenv('KAGGLE_USERNAME')
     os.environ['KAGGLE_KEY'] = os.getenv('KAGGLE_KEY')
-#kaggle datasets download -d nicapotato/womens-ecommerce-clothing-reviews --unzip -p /Users/elhamkaramian/Desktop/final_project_E1
+    #kaggle datasets download -d nicapotato/womens-ecommerce-clothing-reviews --unzip -p /Users/elhamkaramian/Desktop/final_project_E1
     #ا  با استفاده از دستور بالا در ترمینال فایل زیپ را اکسترکت کردم  
     
     
+    df= pd.read_csv("/Users/elhamkaramian/Desktop/final_project_E1/Womens Clothing E-Commerce Reviews.csv")
+    print(df.head())
+    #python manage.py shell
+    #from reviews.scripts.download_kaggle_dataset import run  => استفاده از این سه دستور در ترمینال میشه پنج ردیف اول رو دید
+    #run()
+    print(df.shape[0])
     
+    #cleaning
+    # شمارش تعداد ردیف‌هایی که مقادیر خالی دارند برای ستون‌های مشخص
+    missing_rows = df[['Review Text', 'Title', 'Rating', 'Division Name', 'Department Name', 'Class Name']].isna().sum()
+    print(missing_rows)
     
+    df=df.dropna(subset=['Review Text'])
+    df['Title']=df['Title'].fillna('Unknown')
+    df['Division Name'] = df['Division Name'].fillna('Other')
+    df['Department Name'] = df['Department Name'].fillna('Other')
+    df['Class Name'] = df['Class Name'].fillna('Other')
+    print(df.isna().sum())
+    print(df.shape[0])
     
+    #df_part1, df_part2 = np.array_split(df, 2)
+   # os.makedirs("/Users/elhamkaramian/Desktop/final_project_E1", exist_ok=True)
+    
+def run():
+    print("Le script fonctionne !")
+    download_kaggle_dataset()  
     
     
     
