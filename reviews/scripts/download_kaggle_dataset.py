@@ -19,7 +19,7 @@ def download_kaggle_dataset():
     #run()
     print(df.shape[0])
     
-    #cleaning
+    # Data cleaning
     # شمارش تعداد ردیف‌هایی که مقادیر خالی دارند برای ستون‌های مشخص
     missing_rows = df[['Review Text', 'Title', 'Rating', 'Division Name', 'Department Name', 'Class Name']].isna().sum()
     print(missing_rows)
@@ -32,9 +32,14 @@ def download_kaggle_dataset():
     print(df.isna().sum())
     print(df.shape[0])
     
-    #df_part1, df_part2 = np.array_split(df, 2)
-   # os.makedirs("/Users/elhamkaramian/Desktop/final_project_E1", exist_ok=True)
     
+    
+    #The dataset was divided into two equal parts  
+    df_part1, df_part2 = np.array_split(df, 2)
+    os.makedirs("/Users/elhamkaramian/Desktop/final_project_E1", exist_ok=True)
+    df_part1.to_csv("/Users/elhamkaramian/Desktop/final_project_E1/part1.csv", index=False)
+    df_part2.to_csv("/Users/elhamkaramian/Desktop/final_project_E1/part2.csv", index=False)
+   
 def run():
     print("Le script fonctionne !")
     download_kaggle_dataset()  
