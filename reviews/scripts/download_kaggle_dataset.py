@@ -1,6 +1,9 @@
 import os
 import pandas as pd
 import numpy as np
+from config.settings import DATABASES
+
+from reviews.models import Review, Department, Division, ProductClass
 
 
 
@@ -10,14 +13,15 @@ def download_kaggle_dataset():
     os.environ['KAGGLE_KEY'] = os.getenv('KAGGLE_KEY')
     #kaggle datasets download -d nicapotato/womens-ecommerce-clothing-reviews --unzip -p /Users/elhamkaramian/Desktop/final_project_E1
     #ا  با استفاده از دستور بالا در ترمینال فایل زیپ را اکسترکت کردم  
+    df= pd.read_csv("/code/Womens Clothing E-Commerce Reviews.csv") # mibare be mohite docker
     
-    
-    df= pd.read_csv("/Users/elhamkaramian/Desktop/final_project_E1/Womens Clothing E-Commerce Reviews.csv")
     print(df.head())
+    print(df.shape[0])
     #python manage.py shell
     #from reviews.scripts.download_kaggle_dataset import run  => استفاده از این سه دستور در ترمینال میشه پنج ردیف اول رو دید
     #run()
-    print(df.shape[0])
+  
+    
     
     # Data cleaning
     # شمارش تعداد ردیف‌هایی که مقادیر خالی دارند برای ستون‌های مشخص
@@ -39,12 +43,63 @@ def download_kaggle_dataset():
     os.makedirs("/Users/elhamkaramian/Desktop/final_project_E1", exist_ok=True)
     df_part1.to_csv("/Users/elhamkaramian/Desktop/final_project_E1/part1.csv", index=False)
     df_part2.to_csv("/Users/elhamkaramian/Desktop/final_project_E1/part2.csv", index=False)
-   
+    print(df_part1.shape[0], 'part1')
+    print(df_part2.shape[0])
+    
+    for _, row in df_part1.iterrows(): 
+        division, _= Division.objects.get_or_create(name=row['Division Name'])
+        department, _=Department.objects.get_or_create(name=row['Department Name'])
+        product_class, _=ProductClass.objects.get_or_create(name=row["Class Name"])
+    
+        review = Review(
+            title=row.get('Title', None), 
+            content=row.get('Review Text', None),
+            rating=row.get('Rating', 0),
+            division=division,
+            department=department,
+            product_class=product_class
+        )
+        review.save(using='default')
+    print("df_part1 ont été sauvegardées dans sqlite3 avec succès !")
+    
+    
+    
+    
+    for _, row in df_part2.iterrows():
+        division, _ = Division.objects.get_or_create(name=row['Division Name'])
+        department, _ = Department.objects.get_or_create(name=row['Department Name'])
+        product_class, _ = ProductClass.objects.get_or_create(name=row["Class Name"])
+        
+        review = Review(
+            title=row.get('Title', None), 
+            content=row.get('Review Text', None),
+            rating=row.get('Rating', 0),
+            division=division, 
+            department=department, 
+            product_class=product_class
+        )
+        try:
+            review.save(using='mysql_db') 
+        except Exception as e:
+            print(f"خطا در ذخیره review: {e}")# ذخیره در MySQL
+
+    print("df_part2 ont été sauvegardées dans MySQL avec succès !")
+  
+
+
+        
 def run():
     print("Le script fonctionne !")
     download_kaggle_dataset()  
+     #python manage.py shell
+    #from reviews.scripts.download_kaggle_dataset import run  => استفاده از این سه دستور در ترمینال میشه پنج ردیف اول رو دید
+    #run()
     
-    
+# "django_extensions"
+# python manage.py makemigrations
+#python manage.py migrate --database=default      
+#python manage.py migrate --database=mysql_db     
+         
     
     
     
