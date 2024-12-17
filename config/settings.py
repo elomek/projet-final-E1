@@ -114,7 +114,9 @@ DATABASES = {
         "PORT":'3306',
         #"PORT": os.getenv("DATABASE_PORT", '3306'),
         #"HOST": os.getenv("DATABASE_HOST"),
-       
+    'OPTIONS': {
+        "init_command": "SET foreign_key_checks = 0;", #inro faghat dar mohite tosee ezafe mikonim bad baresh midarim
+        },
     }
 }
 

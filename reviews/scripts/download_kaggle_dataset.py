@@ -1,8 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
-from config.settings import DATABASES
-
+from django.db import IntegrityError
 from reviews.models import Review, Department, Division, ProductClass
 
 
@@ -46,7 +45,7 @@ def download_kaggle_dataset():
     print(df_part1.shape[0], 'part1')
     print(df_part2.shape[0])
     
-    for _, row in df_part1.iterrows(): 
+    '''for _, row in df_part1.iterrows(): 
         division, _= Division.objects.get_or_create(name=row['Division Name'])
         department, _=Department.objects.get_or_create(name=row['Department Name'])
         product_class, _=ProductClass.objects.get_or_create(name=row["Class Name"])
@@ -58,14 +57,53 @@ def download_kaggle_dataset():
             division=division,
             department=department,
             product_class=product_class
-        )
+        )'''
+        
+    '''
+    for _, row in df_part1.iterrows(): 
+        try:
+            # جلوگیری از ایجاد داده‌های تکراری برای Division
+            division, _ = Division.objects.get_or_create(name=row.get('Division Name', 'Unknown Division'))
+            
+            # جلوگیری از ایجاد داده‌های تکراری برای Department
+            department, _ = Department.objects.get_or_create(name=row.get('Department Name', 'Unknown Department'))
+            
+            # جلوگیری از ایجاد داده‌های تکراری برای ProductClass
+            product_class, _ = ProductClass.objects.get_or_create(name=row.get("Class Name", 'Unknown Class'))
+            
+            # مدیریت مقادیر ناقص برای Review
+            title = row.get('Title', 'None')
+            content = row.get('Review Text', 'None')
+            rating = row.get('Rating', None)
+            
+            # اگر امتیاز مشخص نباشد، مقدار پیش‌فرض داده می‌شود
+            if not rating or not isinstance(rating, int) or rating < 1 or rating > 5:
+                rating = 3  # مقدار پیش‌فرض
+            
+            # ایجاد و ذخیره یک نظر
+            review = Review.objects.create(
+                title=title,
+                content=content,
+                rating=rating,
+                division=division,
+                department=department,
+                product_class=product_class
+            )
+            
+            print(f"Review for '{title}' saved successfully.")
+
+        except IntegrityError as e:
+            print(f"IntegrityError: {e} - Skipping row.")
+        except Exception as e:
+            print(f"Error processing row: {e} - Skipping row.")
+
         review.save(using='default')
-    print("df_part1 ont été sauvegardées dans sqlite3 avec succès !")
+    print("df_part1 ont été sauvegardées dans sqlite3 avec succès !")'''
     
     
     
     
-    for _, row in df_part2.iterrows():
+    '''for _, row in df_part2.iterrows():
         division, _ = Division.objects.get_or_create(name=row['Division Name'])
         department, _ = Department.objects.get_or_create(name=row['Department Name'])
         product_class, _ = ProductClass.objects.get_or_create(name=row["Class Name"])
@@ -81,17 +119,55 @@ def download_kaggle_dataset():
         try:
             review.save(using='mysql_db') 
         except Exception as e:
-            print(f"خطا در ذخیره review: {e}")# ذخیره در MySQL
+            print(f"خطا در ذخیره review: {e}")# ذخیره در MySQL'''
+            
+            
+    for _, row in df_part2.iterrows(): 
+        try:
+            # جلوگیری از ایجاد داده‌های تکراری برای Division
+            division, _ = Division.objects.get_or_create(name=row.get('Division Name', 'Unknown Division'))
+            
+            # جلوگیری از ایجاد داده‌های تکراری برای Department
+            department, _ = Department.objects.get_or_create(name=row.get('Department Name', 'Unknown Department'))
+            
+            # جلوگیری از ایجاد داده‌های تکراری برای ProductClass
+            product_class, _ = ProductClass.objects.get_or_create(name=row.get("Class Name", 'Unknown Class'))
+            
+            # مدیریت مقادیر ناقص برای Review
+            title = row.get('Title', 'None')
+            content = row.get('Review Text', 'None')
+            rating = row.get('Rating', None)
+            
+            # اگر امتیاز مشخص نباشد، مقدار پیش‌فرض داده می‌شود
+            if not rating or not isinstance(rating, int) or rating < 1 or rating > 5:
+                rating = 3  # مقدار پیش‌فرض
+            
+            # ایجاد و ذخیره یک نظر
+            review = Review.objects.create(
+                title=title,
+                content=content,
+                rating=rating,
+                division=division,
+                department=department,
+                product_class=product_class
+            )
+            
+            print(f"Review for '{title}' saved successfully.")
 
+        except IntegrityError as e:
+            print(f"IntegrityError: {e} - Skipping row.")
+        except Exception as e:
+            print(f"Error processing row: {e} - Skipping row.")
+
+        review.save(using='mysql_db')
     print("df_part2 ont été sauvegardées dans MySQL avec succès !")
   
-
-
         
 def run():
     print("Le script fonctionne !")
     download_kaggle_dataset()  
-     #python manage.py shell
+   
+    #python manage.py shell
     #from reviews.scripts.download_kaggle_dataset import run  => استفاده از این سه دستور در ترمینال میشه پنج ردیف اول رو دید
     #run()
     

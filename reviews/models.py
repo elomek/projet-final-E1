@@ -28,9 +28,12 @@ class Review(models.Model):
     content = models.TextField()
     rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
     date_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    division = models.ForeignKey(Division, on_delete=models.CASCADE)  
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)  
-    product_class = models.ForeignKey(ProductClass, on_delete=models.CASCADE) 
+    division = models.ForeignKey(Division, on_delete=models.CASCADE, null=True,
+    blank=True)  
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True,
+    blank=True)  
+    product_class = models.ForeignKey(ProductClass, on_delete=models.CASCADE, null=True,
+    blank=True) 
     
   
   
