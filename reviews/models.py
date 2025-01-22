@@ -25,7 +25,7 @@ class Review(models.Model):
     ]
 
     title = models.CharField(max_length=255)
-    content = models.TextField()
+    content = models.TextField(unique=True)
     rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
     date_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     division = models.ForeignKey(Division, on_delete=models.CASCADE, null=True,
